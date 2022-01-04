@@ -1,13 +1,13 @@
 <?php
 
-require_once(__DIR__ . "/../Template/Template.php");
+require_once(__DIR__ . "/../phpclasses-template/Template.php");
 
 class BootstrapTemplate extends Template {
 
   private $cssDir = "css/shared/bstemplate";
   private $jsDir = "js/shared/bstemplate";
 
-function finalizeTopSection($bodyId = null,$topHTML = null, $lang = "en", $charset = "utf-8") {
+function finalizeTopSection($bodyElement = null,$topHTML = null, $lang = "en", $charset = "utf-8") {
         $bodyIdTag = "";
         $returnVal = "";
         $returnVal .= "<!doctype html>\n";
@@ -22,18 +22,20 @@ function finalizeTopSection($bodyId = null,$topHTML = null, $lang = "en", $chars
         $returnVal .= "\t<link rel='stylesheet' href='" . 
             $this->cssDir .  "/bootstrap.min.css'" .
             " crossorigin='anonymous'>" . PHP_EOL;
-        $returnVal .= "\t" . $this->_headSection . PHP_EOL;
         $returnVal .= "\t<script src='" .
             $this->jsDir . "/jquery-3.5.1.min.js' " .
             " crossorigin='anonymous'>" .
             "</script>" . PHP_EOL;
-        $returnVal .= "</head>" . PHP_EOL;
-        if (is_null($bodyId)) {
-          $bodyIdTag = "";
-        } else {
-          $bodyIdTag = " id=\"" . $bodyId . "\""; 
+        foreach ($this->_headElements as $elm) {
+          $returnVal .= $elm;
         }
-        $returnVal .= "<body" . $bodyIdTag . ">" . PHP_EOL;
+        $returnVal .= "</head>" . PHP_EOL;
+        if (is_null($bodyElement)) {
+          $bodyTag = "<body>";
+        } else {
+          $bodyTag = $bodyElement;
+        }
+        $returnVal .= $bodyTag . PHP_EOL;
         if (is_null($topHTML)) {
           $returnVal .= $topHTML;
         }
@@ -50,7 +52,9 @@ function finalizeBottomSection() {
             $this->jsDir . "/bootstrap.min.js'" .
             "  crossorigin='anonymous'>" .
             " </script>" . PHP_EOL;
-        $returnVal .= $this->_bottomSection;
+        foreach ($this->_bottomElements as $elm) {
+          $returnVal .= $elm;
+        }
         $returnVal .= "</body>" . PHP_EOL;
         $returnVal .= "</html>" . PHP_EOL;
         $this->_bottom = $returnVal;
